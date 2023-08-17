@@ -380,11 +380,9 @@ class Zend_Session_SaveHandler_DbTable
      */
     public function gc($maxlifetime)
     {
-        $this->delete($this->getAdapter()->quoteIdentifier($this->_modifiedColumn, true) . ' + '
-                    . $this->getAdapter()->quoteIdentifier($this->_lifetimeColumn, true) . ' < '
-                    . $this->getAdapter()->quote(time()));
-
-        return true;
+        return $this->delete($this->getAdapter()->quoteIdentifier($this->_modifiedColumn, true) . ' + '
+            . $this->getAdapter()->quoteIdentifier($this->_lifetimeColumn, true) . ' < '
+            . $this->getAdapter()->quote(time()));
     }
 
     /**
