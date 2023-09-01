@@ -97,6 +97,8 @@ class Zend_Filter_LocalizedToNormalized implements Zend_Filter_Interface
      */
     public function filter($value)
     {
+        $value = $this->filterTrailingNumberSigns($value);
+
         if (Zend_Locale_Format::isNumber($value, $this->_options)) {
             return Zend_Locale_Format::getNumber($value, $this->_options);
         } else if (($this->_options['date_format'] === null) && (strpos($value, ':') !== false)) {
@@ -107,6 +109,28 @@ class Zend_Filter_LocalizedToNormalized implements Zend_Filter_Interface
             return Zend_Locale_Format::getDate($value, $this->_options);
         }
 
+        return $value;
+    }
+
+    /**
+     * Remove dots and commas from the end of the given value, as they lead to problems and are usually unintended
+     * by  the user who entered them.
+     */
+    private function filterTrailingNumberSigns($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        $lastChar = substr($value, -1, 1);
+        $numberFormattingChars = [',', '.'];
+        if (!empty($value) && in_array($lastChar, $numberFormattingChars)) {
+            $value = rtrim($value, implode('', $numberFormattingChars));
+        }
         return $value;
     }
 }
